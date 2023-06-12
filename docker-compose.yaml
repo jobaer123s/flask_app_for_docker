@@ -1,0 +1,55 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: pagecloud
+      POSTGRES_PASSWORD: pagecloud
+      POSTGRES_DB: page
+    volumes:
+      - dbvolume:/var/lib/postgresql/data
+    
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9090:8080
+
+  backend:
+    image: backend:v1
+    environment:
+      DB_USER: pagecloud
+      DB_PASS: pagecloud
+      DB: page
+      DB_HOST: db
+    links:
+      - db
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+     - 15672:15672
+     - 5672:5672
+
+  frontend:
+    image: frontend:v1
+    ports:
+      - 80:5000
+    links:
+      - backend
+    restart: always
+
+  consumer:
+    image: backend:v1
+    links:
+      - backend
+      - rabbitmq
+    command: sh -c "python consumer.py"
+    restart: always
+    
+
+volumes:
+  dbvolume:
