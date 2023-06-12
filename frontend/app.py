@@ -19,8 +19,8 @@ class Review(object):
 
 app = Flask(__name__)
 
-DB_USER = 'odoo'
-DB_PASSWORD = 'odoo'
+DB_USER = 'postgres'
+DB_PASSWORD = 'flask'
 DB = 'docker_test'
 DB_HOST = 'localhost'
 
